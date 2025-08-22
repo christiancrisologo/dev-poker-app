@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { supabase } from '../../../lib/supabaseClient';
+import { signUp } from '../../../lib/supabaseApi';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -14,7 +14,7 @@ export default function RegisterPage() {
     setLoading(true);
     setError(null);
     setSuccess(false);
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { error } = await signUp(email, password);
     if (error) setError(error.message);
     else setSuccess(true);
     setLoading(false);

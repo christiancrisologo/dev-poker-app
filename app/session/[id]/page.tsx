@@ -3,7 +3,13 @@ import React, { useEffect, useState, useCallback } from 'react';
 import ModeratorControls from './ModeratorControls';
 import VotingPanel from './VotingPanel';
 import VotesReveal from './VotesReveal';
-import { supabase } from '../../../lib/supabaseClient';
+import {
+    getParticipants,
+    getSessionById,
+    subscribeToParticipants,
+    subscribeToSession,
+    removeChannel
+} from '../../../lib/supabaseApi';
 import { useParams } from 'next/navigation';
 
 interface Participant {
@@ -25,11 +31,7 @@ export default function SessionLobbyPage() {
     // Fetch session info
     const fetchSessionInfo = useCallback(async () => {
         if (!sessionId) return;
-        const { data, error: dbError } = await supabase
-            .from('sessions')
-            .select('status, current_story_name')
-            .eq('id', sessionId)
-            .single();
+        const { data, error: dbError } = await getSessionById(sessionId);
         if (dbError) setError('Failed to fetch session info: ' + dbError.message);
         if (!dbError && data) {
             setSessionStatus(data.status);
@@ -40,10 +42,7 @@ export default function SessionLobbyPage() {
         if (!sessionId) return;
         const fetchParticipants = async () => {
             setLoading(true);
-            const { data, error: dbError } = await supabase
-                .from('participants')
-                .select('*')
-                .eq('session_id', sessionId);
+            const { data, error: dbError } = await getParticipants(sessionId);
             if (dbError) setError('Failed to fetch participants: ' + dbError.message);
             if (!dbError && data) setParticipants(data);
             setLoading(false);
@@ -52,30 +51,11 @@ export default function SessionLobbyPage() {
         fetchSessionInfo();
 
         // Subscribe to realtime updates for participants
-        const participantSub = supabase
-            .channel('participants')
-            .on(
-                'postgres_changes',
-                { event: '*', schema: 'public', table: 'participants', filter: `session_id=eq.${sessionId}` },
-                () => {
-                    fetchParticipants();
-                }
-            )
-            .subscribe();
-        // Subscribe to session status/story changes
-        const sessionSub = supabase
-            .channel('sessions')
-            .on(
-                'postgres_changes',
-                { event: '*', schema: 'public', table: 'sessions', filter: `id=eq.${sessionId}` },
-                () => {
-                    fetchSessionInfo();
-                }
-            )
-            .subscribe();
+        const participantSub = subscribeToParticipants(sessionId, fetchParticipants);
+        const sessionSub = subscribeToSession(sessionId, fetchSessionInfo);
         return () => {
-            supabase.removeChannel(participantSub);
-            supabase.removeChannel(sessionSub);
+            removeChannel(participantSub);
+            removeChannel(sessionSub);
         };
     }, [sessionId, fetchSessionInfo]);
 

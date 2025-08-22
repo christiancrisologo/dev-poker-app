@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { supabase } from '../../../lib/supabaseClient';
+import { getUser, createSession } from '../../../lib/supabaseApi';
 
 export default function CreateSessionPage() {
     const [name, setName] = useState('');
@@ -14,20 +14,17 @@ export default function CreateSessionPage() {
         setError(null);
         setInviteCode(null);
         const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-        const moderatorId = (await supabase.auth.getUser()).data.user?.id;
+        const moderatorId = (await getUser()).data.user?.id;
         if (!moderatorId) {
             setError('You must be logged in as moderator.');
             setLoading(false);
             return;
         }
-        const { data, error: dbError } = await supabase
-            .from('sessions')
-            .insert({
-                name,
-                invite_code: code,
-                moderator_id: moderatorId,
-            })
-            .select('invite_code');
+        const { data, error: dbError } = await createSession({
+            name,
+            invite_code: code,
+            moderator_id: moderatorId,
+        });
         if (dbError) setError(dbError.message);
         else setInviteCode(data?.[0]?.invite_code || code);
         setLoading(false);
