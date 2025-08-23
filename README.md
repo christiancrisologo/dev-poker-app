@@ -1,77 +1,71 @@
-## Agile Poker Card Estimation MVP
+# Agile Poker Card Estimation
 
-This is an Agile Poker Card Estimation web app built with Next.js, Tailwind CSS, and Supabase. It enables collaborative story point estimation for agile teams, supporting remote and in-person sessions with real-time updates.
+A collaborative story point estimation app for agile teams, built with Next.js, Tailwind CSS, and Supabase.
 
-### Tech Stack
-- **Frontend:** Next.js (React)
+## ✨ Features
+- Modern gradient/card UI theme across all pages
+- User authentication: Register, Login, or Join as Guest
+- Create and join sessions via invite code
+- Real-time participant updates
+- Moderator controls: start round, reveal votes, reset round
+- Poker card voting and vote reveal (average/median)
+- Custom 404 page
+- Mobile responsive and accessible
+
+## 🛠️ Tech Stack
+- **Frontend:** Next.js (App Router, React)
 - **Styling:** Tailwind CSS
-- **Backend & Database:** Supabase (PostgreSQL, Authentication, Realtime)
+- **Backend/DB:** Supabase (PostgreSQL, Auth, Realtime)
 
-### Features
-- User authentication (register, login, guest access)
-- Session creation and joining via invite code
-- Real-time participant display
-- Moderator controls (start round, reveal votes, reset round)
-- Participant voting (poker cards)
-- Vote revelation with average/median statistics
-- Responsive UI with Tailwind CSS
+## 🚀 Getting Started
+1. **Clone the repo and install dependencies:**
+   ```bash
+   git clone https://github.com/christiancrisologo/dev-poker-app.git
+   cd agile-poker-app
+   npm install # or yarn install
+   ```
+2. **Configure Supabase:**
+   Add your Supabase credentials to `.env.local`:
+   ```bash
+   NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+   ```
+3. **Run the development server:**
+   ```bash
+   npm run dev # or yarn dev
+   ```
+4. **Open** [http://localhost:3000](http://localhost:3000) in your browser.
 
-### Setup
-1. Clone the repo and install dependencies:
-	```bash
-	npm install
-	# or
-	yarn install
-	```
-2. Add your Supabase credentials to `.env.local`:
-	```bash
-	NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-	NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-	```
-3. Run the development server:
-	```bash
-	npm run dev
-	# or
-	yarn dev
-	```
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### Usage
+## 🧑‍💻 Usage
 - Register, log in, or join as guest
 - Create or join a session with an invite code
 - Moderator starts round, participants vote
 - Moderator reveals votes and stats
 - Reset round to estimate next story
 
-### Database Schema
-See `.github/prompts/mvp.prompt.md` for full schema and policies.
+## 🗂️ File Structure
+- All main pages and components are now under `src/app/`
+- Legacy files from the old `app/` directory have been removed
+- UI theme and layout are consistent across landing, auth, and session pages
 
----
+## 📝 Database Schema
+See `.github/prompts/mvp.prompt.md` for schema and policies.
 
-## Getting Started
+## 🖼️ Screenshots
+<!-- Add screenshots of the new UI here -->
 
-First, run the development server:
+## 🧪 Testing & Quality
+- All main pages lint and compile without errors
+- Mobile responsiveness and accessibility verified
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 📄 Documentation
+- [Next.js Docs](https://nextjs.org/docs)
+- [Supabase Docs](https://supabase.com/docs)
+- [Tailwind CSS Docs](https://tailwindcss.com/docs)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-
----
-
-
-## Learn More
-- [Next.js Documentation](https://nextjs.org/docs)
-- [Supabase Documentation](https://supabase.com/docs)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-
-## Deploy
+## 🚢 Deploy
 Deploy easily on [Vercel](https://vercel.com/) or your preferred platform.
+
+---
+
+For questions or feedback, tag @christiancrisologo in your pull request.
