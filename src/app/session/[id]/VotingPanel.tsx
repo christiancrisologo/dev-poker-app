@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { supabase } from '../../../lib/supabaseClient';
+import { supabase } from '../../../../lib/supabaseClient';
 
 const pokerCards = ['0', '1', '2', '3', '5', '8', '13', '21', '40', '100', '?'];
 
