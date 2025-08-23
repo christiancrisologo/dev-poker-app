@@ -27,20 +27,20 @@ export default function GuestPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-      <form onSubmit={handleGuest} className="bg-white p-8 rounded shadow w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6">Join as Guest</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900">
+      <form onSubmit={handleGuest} className="bg-[#181f3a] p-10 sm:p-12 rounded-2xl shadow-2xl w-full max-w-xl text-center border border-blue-900/40">
+        <h2 className="text-3xl font-extrabold mb-6 text-white drop-shadow-lg">Join as Guest</h2>
         <input
           type="text"
           placeholder="Your Name"
           value={name}
           onChange={e => setName(e.target.value)}
-          className="w-full mb-4 p-2 border rounded"
+          className="w-full mb-4 p-3 rounded-lg bg-[#232a4d] text-white border border-blue-900/30 focus:outline-none focus:ring-2 focus:ring-purple-500"
           required
         />
         <button
           type="submit"
-          className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 flex items-center justify-center"
+          className="w-full py-3 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold shadow hover:from-purple-600 hover:to-pink-600 transition flex items-center justify-center"
           disabled={loading}
         >
           {loading ? (

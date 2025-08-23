@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { supabase } from '../../../lib/supabaseClient';
+import { supabase } from '../../../../lib/supabaseClient';
 import { useRouter } from 'next/navigation';
 
 export default function JoinSessionPage() {
@@ -57,20 +57,20 @@ export default function JoinSessionPage() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-            <form onSubmit={handleJoinSession} className="bg-white p-8 rounded shadow w-full max-w-md">
-                <h2 className="text-2xl font-bold mb-6">Join Session</h2>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900">
+            <form onSubmit={handleJoinSession} className="bg-[#181f3a] p-10 sm:p-12 rounded-2xl shadow-2xl w-full max-w-xl text-center border border-blue-900/40">
+                <h2 className="text-3xl font-extrabold mb-6 text-white drop-shadow-lg">Join Session</h2>
                 <input
                     type="text"
                     placeholder="Invite Code"
                     value={inviteCode}
                     onChange={e => setInviteCode(e.target.value.toUpperCase())}
-                    className="w-full mb-4 p-2 border rounded uppercase"
+                    className="w-full mb-4 p-3 rounded-lg bg-[#232a4d] text-white border border-blue-900/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 uppercase"
                     required
                 />
                 <button
                     type="submit"
-                    className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700"
+                    className="w-full py-3 rounded-lg bg-gradient-to-r from-cyan-400 to-blue-400 text-white font-semibold shadow hover:from-cyan-500 hover:to-blue-500 transition"
                     disabled={loading}
                 >
                     {loading ? 'Joining...' : 'Join Session'}

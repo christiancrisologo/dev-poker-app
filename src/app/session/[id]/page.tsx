@@ -3,7 +3,13 @@ import React, { useEffect, useState, useCallback } from 'react';
 import ModeratorControls from './ModeratorControls';
 import VotingPanel from './VotingPanel';
 import VotesReveal from './VotesReveal';
-import { supabase } from '../../../lib/supabaseClient';
+import {
+    getParticipants,
+    getSessionById,
+    subscribeToParticipants,
+    subscribeToSession,
+    removeChannel
+} from '../../../../lib/supabaseApi';
 import { useParams } from 'next/navigation';
 
 interface Participant {
@@ -25,11 +31,7 @@ export default function SessionLobbyPage() {
     // Fetch session info
     const fetchSessionInfo = useCallback(async () => {
         if (!sessionId) return;
-        const { data, error: dbError } = await supabase
-            .from('sessions')
-            .select('status, current_story_name')
-            .eq('id', sessionId)
-            .single();
+        const { data, error: dbError } = await getSessionById(sessionId);
         if (dbError) setError('Failed to fetch session info: ' + dbError.message);
         if (!dbError && data) {
             setSessionStatus(data.status);
@@ -40,10 +42,7 @@ export default function SessionLobbyPage() {
         if (!sessionId) return;
         const fetchParticipants = async () => {
             setLoading(true);
-            const { data, error: dbError } = await supabase
-                .from('participants')
-                .select('*')
-                .eq('session_id', sessionId);
+            const { data, error: dbError } = await getParticipants(sessionId);
             if (dbError) setError('Failed to fetch participants: ' + dbError.message);
             if (!dbError && data) setParticipants(data);
             setLoading(false);
@@ -52,30 +51,11 @@ export default function SessionLobbyPage() {
         fetchSessionInfo();
 
         // Subscribe to realtime updates for participants
-        const participantSub = supabase
-            .channel('participants')
-            .on(
-                'postgres_changes',
-                { event: '*', schema: 'public', table: 'participants', filter: `session_id=eq.${sessionId}` },
-                () => {
-                    fetchParticipants();
-                }
-            )
-            .subscribe();
-        // Subscribe to session status/story changes
-        const sessionSub = supabase
-            .channel('sessions')
-            .on(
-                'postgres_changes',
-                { event: '*', schema: 'public', table: 'sessions', filter: `id=eq.${sessionId}` },
-                () => {
-                    fetchSessionInfo();
-                }
-            )
-            .subscribe();
+        const participantSub = subscribeToParticipants(sessionId, fetchParticipants);
+        const sessionSub = subscribeToSession(sessionId, fetchSessionInfo);
         return () => {
-            supabase.removeChannel(participantSub);
-            supabase.removeChannel(sessionSub);
+            removeChannel(participantSub);
+            removeChannel(sessionSub);
         };
     }, [sessionId, fetchSessionInfo]);
 
@@ -90,9 +70,9 @@ export default function SessionLobbyPage() {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-            <div className="bg-white p-8 rounded shadow w-full max-w-md">
-                <h2 className="text-2xl font-bold mb-6">Session Lobby</h2>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900">
+            <div className="bg-[#181f3a] p-10 sm:p-12 rounded-2xl shadow-2xl w-full max-w-xl text-center border border-blue-900/40">
+                <h2 className="text-3xl font-extrabold mb-6 text-white drop-shadow-lg">Session Lobby</h2>
                 <ModeratorControls
                     sessionId={sessionId}
                     currentStoryName={storyName}
@@ -125,14 +105,14 @@ export default function SessionLobbyPage() {
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                         </svg>
-                        <p className="text-gray-500">Loading participants...</p>
+                        <p className="text-blue-200">Loading participants...</p>
                     </div>
                 ) : (
                     <ul className="space-y-2">
                         {participants.map(p => (
-                            <li key={p.id} className="p-2 border rounded flex items-center justify-between">
+                            <li key={p.id} className="p-2 border rounded-lg flex items-center justify-between bg-[#232a4d] text-white">
                                 <span>{p.guest_name || p.user_id}</span>
-                                <span className="text-xs text-gray-500">{p.status}</span>
+                                <span className="text-xs text-blue-200">{p.status}</span>
                             </li>
                         ))}
                     </ul>
