@@ -26,7 +26,7 @@ export default function Home() {
             🔗 Join Session
           </Link>
         </div>
-  {/* View History button removed as requested */}
+        {/* View History button removed as requested */}
       </div>
     </div>
   );
