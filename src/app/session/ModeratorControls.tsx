@@ -1,6 +1,7 @@
+
 "use client";
 import React, { useState } from 'react';
-import { supabase } from '../../../lib/supabaseClient';
+import { supabase } from '../../lib/supabaseClient';
 
 interface ModeratorControlsProps {
     sessionId: string | undefined;
@@ -73,27 +74,27 @@ export default function ModeratorControls({ sessionId, currentStoryName, status,
                     placeholder="Story Name"
                     value={storyName}
                     onChange={e => setStoryName(e.target.value)}
-                    className="p-3 border border-theme-accent rounded-lg w-full bg-theme-input text-theme-text focus:outline-none focus:ring-2 focus:ring-theme-accent"
+                    className="w-full input"
                 />
             </div>
             <div className="flex flex-wrap gap-3 justify-center">
                 <button
                     onClick={handleStartRound}
-                    className="bg-theme-primary text-white px-6 py-2 rounded-lg font-semibold shadow hover:bg-theme-primary-dark transition"
+                    className="btn"
                     disabled={loading || status === 'voting'}
                 >
                     Start Round
                 </button>
                 <button
                     onClick={handleRevealVotes}
-                    className="bg-theme-success text-white px-6 py-2 rounded-lg font-semibold shadow hover:bg-theme-success-dark transition"
+                    className="btn"
                     disabled={loading || status !== 'voting'}
                 >
                     Reveal Votes
                 </button>
                 <button
                     onClick={handleResetRound}
-                    className="bg-theme-muted text-white px-6 py-2 rounded-lg font-semibold shadow hover:bg-theme-muted-dark transition"
+                    className="btn"
                     disabled={loading}
                 >
                     Reset Round
