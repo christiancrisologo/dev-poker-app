@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import localStorageUtil from "../lib/localStorageUtil";
+import { userStore } from "../store";
 import { useRouter } from "next/navigation";
 import { getUser, createUser } from "../lib/supabaseApi";
 
@@ -30,7 +30,7 @@ export default function Home() {
     }
     if (extistingUserData?.length > 0) {
       // User exists, store in localStorage
-      localStorageUtil.set("poker-user", extistingUserData[0]);
+      userStore.getState().setUser(extistingUserData[0]);
       router.push("/auth/register");
       setLoading(false);
       return;
@@ -42,7 +42,7 @@ export default function Home() {
       setLoading(false);
       return;
     }
-    localStorageUtil.set("poker-user", createUserData);
+    userStore.getState().setUser(createUserData);
     router.push("/auth/register");
     setLoading(false);
   };

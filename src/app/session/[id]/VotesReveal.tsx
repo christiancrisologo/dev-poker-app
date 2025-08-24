@@ -52,24 +52,24 @@ export default function VotesReveal({ sessionId, participants, roundNumber, reve
     })();
 
     return (
-        <div className="bg-yellow-100 p-4 rounded mb-6">
-            <h3 className="font-bold mb-2">Votes Reveal</h3>
+        <div className="bg-theme-panel p-6 rounded-2xl mb-8 shadow-lg">
+            <h3 className="font-bold text-theme-heading mb-4 text-2xl">Votes Reveal</h3>
             {loading ? (
-                <p>Loading votes...</p>
+                <p className="text-theme-text">Loading votes...</p>
             ) : (
-                <ul className="space-y-2 mb-2">
+                <ul className="space-y-3 mb-4">
                     {participants.map(p => {
                         const vote = votes.find(v => v.participant_id === p.id);
                         return (
-                            <li key={p.id} className="p-2 border rounded flex items-center justify-between">
-                                <span>{p.guest_name || p.user_id}</span>
-                                <span className="font-mono text-lg">{vote ? vote.value : '-'}</span>
+                            <li key={p.id} className="p-3 border rounded-xl flex items-center justify-between bg-theme-list text-theme-text shadow">
+                                <span className="font-semibold text-lg">{p.guest_name || p.user_id}</span>
+                                <span className="font-mono text-xl text-theme-accent">{vote ? vote.value : '-'}</span>
                             </li>
                         );
                     })}
                 </ul>
             )}
-            <div className="mt-2">
+            <div className="mt-4 text-theme-text">
                 <span className="font-semibold">Average:</span> {average ?? '-'}<br />
                 <span className="font-semibold">Median:</span> {median ?? '-'}
             </div>

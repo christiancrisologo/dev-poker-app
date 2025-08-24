@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { supabase } from '../../../lib/supabaseClient';
-import localStorageUtil from '../../../lib/localStorageUtil';
+import { userStore } from '../../../store';
 import { useRouter } from 'next/navigation';
 
 export default function JoinSessionPage() {
@@ -30,11 +30,9 @@ export default function JoinSessionPage() {
         let userId = user?.id;
         let guestName = null;
         if (!userId) {
-            type Guest = { id: string; username: string };
-            const guest = localStorageUtil.get('poker-guest') as Guest | null;
-
+            const guest = userStore.getState().user;
             userId = guest?.id;
-            guestName = guest?.username;
+            guestName = guest?.name;
             if (!userId || !guestName) {
                 setError('You must be logged in or join as guest.');
                 setLoading(false);

@@ -5,8 +5,6 @@ const isProduction = ['production', 'github-pages'].includes(process.env.NODE_EN
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  // Enable static export for GitHub Pages
-  ...(isProduction ? { output: 'export' } : {}),
   
   // Add trailing slash for GitHub Pages compatibility
   trailingSlash: true,

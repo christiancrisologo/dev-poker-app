@@ -20,11 +20,11 @@ export async function createSession({ name, invite_code, moderator_id }: { name:
 
 // Get session by ID with status and story name
 export async function getSessionById(id: string) {
-  return supabase.from('poker_sessions').select('status, current_story_name').eq('id', id).single();
+  return supabase.from('poker_sessions').select('status, current_story_name, id').eq('id', id).single();
 }
 
 export async function getSessionByInviteCode(invite_code: string) {
-  return supabase.from('poker_sessions').select('id').eq('invite_code', invite_code).single();
+  return supabase.from('poker_sessions').select('*').eq('invite_code', invite_code).single();
 }
 
 export async function updateSessionStatus(id: string, status: string, current_story_name?: string | null) {

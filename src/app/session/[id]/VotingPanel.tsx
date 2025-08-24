@@ -36,13 +36,13 @@ export default function VotingPanel({ sessionId, participantId, roundNumber, vot
     };
 
     return (
-        <div className="bg-gray-100 p-4 rounded mb-6">
-            <h3 className="font-bold mb-2">Vote Your Card</h3>
-            <div className="flex flex-wrap gap-2 mb-2">
+        <div className="bg-theme-panel p-6 rounded-2xl mb-8 shadow-lg">
+            <h3 className="font-bold text-theme-heading mb-4 text-2xl">Vote Your Card</h3>
+            <div className="flex flex-wrap gap-3 mb-4 justify-center">
                 {pokerCards.map(card => (
                     <button
                         key={card}
-                        className={`px-4 py-2 rounded border ${selected === card ? 'bg-blue-600 text-white' : 'bg-white'} ${votingEnabled && !voteSubmitted ? 'hover:bg-blue-100' : 'opacity-50 cursor-not-allowed'}`}
+                        className={`px-6 py-3 rounded-xl border font-bold text-lg shadow transition ${selected === card ? 'bg-theme-primary text-white' : 'bg-theme-card text-theme-text'} ${votingEnabled && !voteSubmitted ? 'hover:bg-theme-primary-light' : 'opacity-50 cursor-not-allowed'}`}
                         disabled={!votingEnabled || voteSubmitted || loading}
                         onClick={() => handleVote(card)}
                     >
@@ -50,9 +50,9 @@ export default function VotingPanel({ sessionId, participantId, roundNumber, vot
                     </button>
                 ))}
             </div>
-            {error && <p className="text-red-500 mt-2">{error}</p>}
-            {voteSubmitted && !votesRevealed && <p className="text-gray-600">Vote submitted! Waiting for reveal...</p>}
-            {votesRevealed && selected && <p className="text-green-600">Your vote: <span className="font-bold">{selected}</span></p>}
+            {error && <p className="text-theme-error mt-4">{error}</p>}
+            {voteSubmitted && !votesRevealed && <p className="text-theme-muted">Vote submitted! Waiting for reveal...</p>}
+            {votesRevealed && selected && <p className="text-theme-success">Your vote: <span className="font-bold">{selected}</span></p>}
         </div>
     );
 }

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
 import { createSession, getSessionByInviteCode } from '../../../lib/supabaseApi';
-import localStorageUtil from '../../../lib/localStorageUtil';
+import { userStore } from '../../../store';
 
 export default function GuestPage() {
     const [name, setName] = useState("");
@@ -15,6 +15,7 @@ export default function GuestPage() {
     const [joinError, setJoinError] = useState<string | null>(null);
     const router = useRouter();
 
+    const setUser = userStore((state) => state.setUser);
     const handleGuest = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -24,10 +25,9 @@ export default function GuestPage() {
             setLoading(false);
             return;
         }
-        // Generate a temporary userId and store in sessionStorage
+        // Generate a temporary userId and store in zustand (persisted)
         const guestId = uuidv4();
-        localStorageUtil.set("guestId", guestId);
-        localStorageUtil.set("guestName", name);
+        setUser({ id: guestId, name, type: 'guest' });
         setJoined(true);
         setLoading(false);
     };
@@ -43,8 +43,8 @@ export default function GuestPage() {
         }
         const code = Math.random().toString(36).substring(2, 8).toUpperCase();
         // For guests, use guestId as moderator_id
-        const guestId = localStorageUtil.get<string>("guestId");
-        const { data, error: dbError } = await createSession({ name: sessionName, invite_code: code, moderator_id: guestId || '' });
+        const user = userStore.getState().user;
+        const { data, error: dbError } = await createSession({ name: sessionName, invite_code: code, moderator_id: user?.id || '' });
         if (dbError) {
             setError(dbError.message);
             setLoading(false);
