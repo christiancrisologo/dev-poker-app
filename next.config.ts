@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
-import path from "path";
 
-const repoName = "kids-math-quiz";
+const repoName = "dev-poker-app";
 const isProduction = ['production', 'github-pages'].includes(process.env.NODE_ENV);
 
 const nextConfig: NextConfig = {
