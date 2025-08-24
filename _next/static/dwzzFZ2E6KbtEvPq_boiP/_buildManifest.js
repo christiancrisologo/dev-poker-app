@@ -1,13 +1,13 @@
 self.__BUILD_MANIFEST = {
   "/_error": [
-    "./static/chunks/c5a665aad6d3c9b4.js"
+    "./static/chunks/afaa31c6fb8a6654.js"
   ],
   "__rewrites": {
     "afterFiles": [],
     "beforeFiles": [
       {
-        "source": "/kids-math-quiz//_next/:path+",
-        "destination": "/kids-math-quiz/_next/:path+"
+        "source": "/dev-poker-app//_next/:path+",
+        "destination": "/dev-poker-app/_next/:path+"
       }
     ],
     "fallback": []
