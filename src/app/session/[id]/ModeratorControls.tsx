@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import { supabase } from '../../../lib/supabaseClient';
 
 interface ModeratorControlsProps {
-    sessionId: string;
-    currentStoryName: string | null;
-    status: string;
+    sessionId: string | undefined;
+    currentStoryName: string | null | undefined;
+    status: string | undefined;
     onStatusChange?: () => void;
 }
 
@@ -65,41 +65,41 @@ export default function ModeratorControls({ sessionId, currentStoryName, status,
     };
 
     return (
-        <div className="bg-gray-100 p-4 rounded mb-6">
-            <h3 className="font-bold mb-2">Moderator Controls</h3>
-            <div className="mb-2">
+        <div className="bg-theme-panel p-6 rounded-2xl mb-8 shadow-lg">
+            <h3 className="font-bold text-theme-heading mb-4 text-2xl">Moderator Controls</h3>
+            <div className="mb-4">
                 <input
                     type="text"
                     placeholder="Story Name"
                     value={storyName}
                     onChange={e => setStoryName(e.target.value)}
-                    className="p-2 border rounded w-full"
+                    className="p-3 border border-theme-accent rounded-lg w-full bg-theme-input text-theme-text focus:outline-none focus:ring-2 focus:ring-theme-accent"
                 />
             </div>
-            <div className="flex space-x-2">
+            <div className="flex flex-wrap gap-3 justify-center">
                 <button
                     onClick={handleStartRound}
-                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                    className="bg-theme-primary text-white px-6 py-2 rounded-lg font-semibold shadow hover:bg-theme-primary-dark transition"
                     disabled={loading || status === 'voting'}
                 >
                     Start Round
                 </button>
                 <button
                     onClick={handleRevealVotes}
-                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                    className="bg-theme-success text-white px-6 py-2 rounded-lg font-semibold shadow hover:bg-theme-success-dark transition"
                     disabled={loading || status !== 'voting'}
                 >
                     Reveal Votes
                 </button>
                 <button
                     onClick={handleResetRound}
-                    className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+                    className="bg-theme-muted text-white px-6 py-2 rounded-lg font-semibold shadow hover:bg-theme-muted-dark transition"
                     disabled={loading}
                 >
                     Reset Round
                 </button>
             </div>
-            {error && <p className="text-red-500 mt-2">{error}</p>}
+            {error && <p className="text-theme-error mt-4">{error}</p>}
         </div>
     );
 }

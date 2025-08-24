@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createSession, getSessionByInviteCode } from '../../../lib/supabaseApi';
-import localStorageUtil from '../../../lib/localStorageUtil';
+import { userStore } from '../../../store';
 
 export default function RegisterPage() {
     const [loading, setLoading] = useState(false);
@@ -14,8 +14,8 @@ export default function RegisterPage() {
     const router = useRouter();
 
     useEffect(() => {
-        const currentUser = localStorageUtil.get('poker-user') as { id?: string; username?: string } | null;
-        setUserName(currentUser?.username ?? "");
+        const user = userStore.getState().user;
+        setUserName(user?.name ?? "");
     }, []);
 
     const handleCreateSession = async (e: React.FormEvent) => {
@@ -28,14 +28,14 @@ export default function RegisterPage() {
             return;
         }
 
-        const currentUser = localStorageUtil.get('poker-user') as { id: string; username?: string } | null;
-        if (!currentUser?.id) {
+        const user = userStore.getState().user;
+        if (!user?.id) {
             setCreateSessionError("Moderator ID is missing. Please log in again.");
             setLoading(false);
             return;
         }
         const code = Math.random().toString(36).substring(2, 8).toUpperCase();
-        const { data, error: dbError } = await createSession({ name: sessionName, invite_code: code, moderator_id: currentUser.id });
+        const { data, error: dbError } = await createSession({ name: sessionName, invite_code: code, moderator_id: user.id });
         if (dbError) {
             setCreateSessionError(dbError.message);
             setLoading(false);
