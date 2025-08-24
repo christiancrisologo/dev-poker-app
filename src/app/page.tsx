@@ -58,12 +58,12 @@ export default function Home() {
             placeholder="Username"
             value={username}
             onChange={e => setUsername(e.target.value)}
-            className="w-full mb-4 p-3 rounded-lg bg-[#232a4d] text-white border border-blue-900/30 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full input"
             required
           />
           <button
             type="submit"
-            className="w-full py-3 rounded-lg bg-gradient-to-r from-green-400 to-blue-400 text-white font-semibold shadow hover:from-green-500 hover:to-blue-500 transition flex items-center justify-center"
+            className="w-full btn flex items-center justify-center"
             disabled={loading}
           >
             {loading ? (

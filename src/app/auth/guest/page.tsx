@@ -16,6 +16,7 @@ export default function GuestPage() {
     const router = useRouter();
 
     const setUser = userStore((state) => state.setUser);
+
     const handleGuest = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -51,7 +52,8 @@ export default function GuestPage() {
             return;
         }
         setLoading(false);
-        router.push(`/session/${data?.[0]?.invite_code || code}`);
+        const inviteCode = data?.[0]?.invite_code || code;
+        router.push(`/session?invite_code=${inviteCode}&user_id=${user?.id}`);
     };
 
     const handleJoinSession = async (e: React.FormEvent) => {
@@ -70,7 +72,6 @@ export default function GuestPage() {
             return;
         }
         setLoading(false);
-        router.push(`/session/${inviteCode}`);
     };
 
     return (
@@ -78,31 +79,22 @@ export default function GuestPage() {
             <div className="bg-[#181f3a] p-10 sm:p-12 rounded-2xl shadow-2xl w-full max-w-xl text-center border border-blue-900/40">
                 <h2 className="text-3xl font-extrabold mb-6 text-white drop-shadow-lg">Join as Guest</h2>
                 {!joined ? (
-                    <form onSubmit={handleGuest}>
+                    <form onSubmit={handleGuest} className="mb-8">
                         <input
                             type="text"
-                            placeholder="Your Name"
+                            placeholder="Name"
                             value={name}
                             onChange={e => setName(e.target.value)}
-                            className="w-full mb-4 p-3 rounded-lg bg-[#232a4d] text-white border border-blue-900/30 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            className="w-full input"
                             required
                         />
                         <button
                             type="submit"
-                            className="w-full py-3 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold shadow hover:from-purple-600 hover:to-pink-600 transition flex items-center justify-center"
+                            className="w-full btn"
                             disabled={loading}
                         >
-                            {loading ? (
-                                <>
-                                    <svg className="animate-spin h-5 w-5 mr-2 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                                    </svg>
-                                    Joining...
-                                </>
-                            ) : 'Join'}
+                            {loading ? 'Continue as Guest...' : 'Continue as Guest'}
                         </button>
-                        {error && <p className="text-red-500 mt-4">{error}</p>}
                     </form>
                 ) : (
                     <>

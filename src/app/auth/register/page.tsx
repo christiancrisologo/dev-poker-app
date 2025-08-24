@@ -42,7 +42,9 @@ export default function RegisterPage() {
             return;
         }
         setLoading(false);
-        router.push(`/session/${data?.[0]?.invite_code || code}`);
+
+        const inviteCode = data?.[0]?.invite_code || code;
+        router.push(`/session?invite_code=${inviteCode}&user_id=${user?.id}`);
     };
 
     const handleJoinSession = async (e: React.FormEvent) => {
@@ -55,13 +57,16 @@ export default function RegisterPage() {
             return;
         }
         const { data, error: sessionError } = await getSessionByInviteCode(inviteCode);
+        const user = userStore.getState().user;
+
         if (sessionError || !data) {
             setJoinError("Session not found.");
             setLoading(false);
             return;
         }
         setLoading(false);
-        router.push(`/session/${inviteCode}`);
+
+        router.push(`/session?invite_code=${inviteCode}&user_id=${user?.id}`);
     };
 
     return (
@@ -76,15 +81,15 @@ export default function RegisterPage() {
                             placeholder="Session Name"
                             value={sessionName}
                             onChange={e => setSessionName(e.target.value)}
-                            className="w-full mb-4 p-3 rounded-lg bg-[#232a4d] text-white border border-blue-900/30 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            className="w-full input"
                             required
                         />
                         <button
                             type="submit"
-                            className="w-full py-3 rounded-lg bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-900 font-semibold shadow hover:from-yellow-500 hover:to-orange-500 transition"
+                            className="w-full btn"
                             disabled={loading}
                         >
-                            {loading ? 'Creating...' : 'Create Session'}
+                            {loading ? 'Create Session...' : 'Create Session'}
                         </button>
                         {createSessionError && <p className="text-red-500 mt-4">{createSessionError}</p>}
                     </form>
