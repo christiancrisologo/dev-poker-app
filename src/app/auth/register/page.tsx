@@ -1,63 +1,113 @@
 "use client";
-import React, { useState } from 'react';
-import { signUp } from '../../../../lib/supabaseApi';
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createSession, getSessionByInviteCode } from '../../../lib/supabaseApi';
+import localStorageUtil from '../../../lib/localStorageUtil';
 
 export default function RegisterPage() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState(false);
+    const [createSessionError, setCreateSessionError] = useState<string | null>(null);
+    const [sessionName, setSessionName] = useState("");
+    const [inviteCode, setInviteCode] = useState("");
+    const [username, setUserName] = useState("");
+    const [joinError, setJoinError] = useState<string | null>(null);
+    const router = useRouter();
 
-    const handleRegister = async (e: React.FormEvent) => {
+    useEffect(() => {
+        const currentUser = localStorageUtil.get('poker-user') as { id?: string; username?: string } | null;
+        setUserName(currentUser?.username ?? "");
+    }, []);
+
+    const handleCreateSession = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        setError(null);
-        setSuccess(false);
-        const { error } = await signUp(email, password);
-        if (error) setError(error.message);
-        else setSuccess(true);
+        setCreateSessionError(null);
+        if (!sessionName.trim()) {
+            setCreateSessionError("Session name is required");
+            setLoading(false);
+            return;
+        }
+
+        const currentUser = localStorageUtil.get('poker-user') as { id: string; username?: string } | null;
+        if (!currentUser?.id) {
+            setCreateSessionError("Moderator ID is missing. Please log in again.");
+            setLoading(false);
+            return;
+        }
+        const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+        const { data, error: dbError } = await createSession({ name: sessionName, invite_code: code, moderator_id: currentUser.id });
+        if (dbError) {
+            setCreateSessionError(dbError.message);
+            setLoading(false);
+            return;
+        }
         setLoading(false);
+        router.push(`/session/${data?.[0]?.invite_code || code}`);
+    };
+
+    const handleJoinSession = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setJoinError(null);
+        setLoading(true);
+        if (!inviteCode.trim()) {
+            setJoinError("Invite code is required");
+            setLoading(false);
+            return;
+        }
+        const { data, error: sessionError } = await getSessionByInviteCode(inviteCode);
+        if (sessionError || !data) {
+            setJoinError("Session not found.");
+            setLoading(false);
+            return;
+        }
+        setLoading(false);
+        router.push(`/session/${inviteCode}`);
     };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900">
-            <form onSubmit={handleRegister} className="bg-[#181f3a] p-10 sm:p-12 rounded-2xl shadow-2xl w-full max-w-xl text-center border border-blue-900/40">
-                <h2 className="text-3xl font-extrabold mb-6 text-white drop-shadow-lg">Register</h2>
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    className="w-full mb-4 p-3 rounded-lg bg-[#232a4d] text-white border border-blue-900/30 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                />
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    className="w-full mb-4 p-3 rounded-lg bg-[#232a4d] text-white border border-blue-900/30 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                />
-                <button
-                    type="submit"
-                    className="w-full py-3 rounded-lg bg-gradient-to-r from-green-400 to-blue-400 text-white font-semibold shadow hover:from-green-500 hover:to-blue-500 transition flex items-center justify-center"
-                    disabled={loading}
-                >
-                    {loading ? (
-                        <>
-                            <svg className="animate-spin h-5 w-5 mr-2 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                            </svg>
-                            Registering...
-                        </>
-                    ) : 'Register'}
-                </button>
-                {error && <p className="text-red-500 mt-4">{error}</p>}
-                {success && <p className="text-green-500 mt-4">Registration successful! Check your email.</p>}
-            </form>
+            <div className="bg-[#181f3a] p-10 sm:p-12 rounded-2xl shadow-2xl w-full max-w-xl text-center border border-blue-900/40">
+                <h2 className="text-3xl font-extrabold mb-6 text-white drop-shadow-lg">Welcome, {username || "User"}!</h2>
+                <p className="mb-8 text-blue-200 text-lg">You are registered. Create or join a session below.</p>
+                <div className="mb-8">
+                    <form onSubmit={handleCreateSession} className="mb-4">
+                        <input
+                            type="text"
+                            placeholder="Session Name"
+                            value={sessionName}
+                            onChange={e => setSessionName(e.target.value)}
+                            className="w-full mb-4 p-3 rounded-lg bg-[#232a4d] text-white border border-blue-900/30 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            required
+                        />
+                        <button
+                            type="submit"
+                            className="w-full py-3 rounded-lg bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-900 font-semibold shadow hover:from-yellow-500 hover:to-orange-500 transition"
+                            disabled={loading}
+                        >
+                            {loading ? 'Creating...' : 'Create Session'}
+                        </button>
+                        {createSessionError && <p className="text-red-500 mt-4">{createSessionError}</p>}
+                    </form>
+                    <form onSubmit={handleJoinSession}>
+                        <input
+                            type="text"
+                            placeholder="Invite Code"
+                            value={inviteCode}
+                            onChange={e => setInviteCode(e.target.value.toUpperCase())}
+                            className="w-full mb-4 p-3 rounded-lg bg-[#232a4d] text-white border border-blue-900/30 focus:outline-none focus:ring-2 focus:ring-cyan-500 uppercase"
+                            required
+                        />
+                        <button
+                            type="submit"
+                            className="w-full py-3 rounded-lg bg-gradient-to-r from-cyan-400 to-blue-400 text-white font-semibold shadow hover:from-cyan-500 hover:to-blue-500 transition"
+                            disabled={loading}
+                        >
+                            {loading ? 'Joining...' : 'Join Session'}
+                        </button>
+                        {joinError && <p className="text-red-500 mt-4">{joinError}</p>}
+                    </form>
+                </div>
+            </div>
         </div>
     );
 }
