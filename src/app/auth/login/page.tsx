@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { signIn } from '../../../../lib/supabaseApi';
+import { signIn } from '../../../lib/supabaseApi';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');

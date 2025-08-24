@@ -2,7 +2,7 @@ import ModeratorControls from './ModeratorControls';
 import {
     getParticipants,
     getSessionById
-} from '../../../../lib/supabaseApi';
+} from '../../../lib/supabaseApi';
 import { notFound } from 'next/navigation';
 
 interface Participant {
@@ -26,7 +26,8 @@ interface PageProps {
     params: { id: string };
 }
 
-export default async function SessionLobbyPage({ params }: PageProps) {
+export default async function SessionLobbyPage(props: PageProps) {
+    const params = await props.params;
     const sessionId = params.id;
     // Fetch session info
     const { data: session, error: sessionError } = await getSessionById(sessionId);
